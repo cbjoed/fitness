@@ -175,10 +175,6 @@ textarea:focus {
   margin-top: 28px;
 }
 
-.oauth-buttons button {
-  background: var(--text-h);
-}
-
 .dashboard {
   display: flex;
   flex-direction: column;
