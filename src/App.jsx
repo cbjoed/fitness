@@ -1,9 +1,12 @@
-import { NavLink, Navigate, Route, BrowserRouter, Routes } from 'react-router-dom'
+import { NavLink, Navigate, Route, HashRouter, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { WorkoutProvider } from './context/WorkoutContext'
 import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import Dashboard from './components/Dashboard'
 import ProgressChart from './components/ProgressChart'
+import RoutinesTab from './components/RoutinesTab'
+import ActiveWorkout from './components/ActiveWorkout'
 import './App.css'
 
 function Header() {
@@ -19,6 +22,9 @@ function Header() {
         </NavLink>
         <NavLink to="/progress" className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Progress
+        </NavLink>
+        <NavLink to="/routines" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+          Routines
         </NavLink>
       </nav>
       <button type="button" onClick={signOut}>
@@ -41,6 +47,10 @@ function BottomNav() {
       <NavLink to="/progress" className={({ isActive }) => (isActive ? 'active' : undefined)}>
         <span className="bottom-nav-icon" aria-hidden="true">📈</span>
         Progress
+      </NavLink>
+      <NavLink to="/routines" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+        <span className="bottom-nav-icon" aria-hidden="true">💪</span>
+        Routines
       </NavLink>
     </nav>
   )
@@ -66,6 +76,22 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/routines"
+        element={
+          <ProtectedRoute>
+            <RoutinesTab />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/workout/active"
+        element={
+          <ProtectedRoute>
+            <ActiveWorkout />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
@@ -74,13 +100,15 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Header />
-        <main className="app-main">
-          <AppRoutes />
-        </main>
-        <BottomNav />
-      </BrowserRouter>
+      <WorkoutProvider>
+        <HashRouter>
+          <Header />
+          <main className="app-main">
+            <AppRoutes />
+          </main>
+          <BottomNav />
+        </HashRouter>
+      </WorkoutProvider>
     </AuthProvider>
   )
 }
