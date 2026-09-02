@@ -11,6 +11,7 @@ const MUSCLE_OPTIONS = [
   'Biceps',
   'Triceps',
   'Core',
+  'Cardio',
 ]
 
 export default function ExercisePickerModal({ onSelect, onClose }) {

@@ -8,6 +8,8 @@ export const COMMON_EXERCISES = [
   'Incline Dumbbell Press',
   'Dumbbell Fly',
   'Cable Fly',
+  'Pec Deck',
+  'Machine Chest Fly',
   'Push-up',
   'Dip',
   'Chest Press Machine',
@@ -23,6 +25,8 @@ export const COMMON_EXERCISES = [
   'T-Bar Row',
   'Face Pull',
   'Back Extension',
+  'Straight-Arm Pulldown',
+  'Inverted Row',
 
   // Legs
   'Squat',
@@ -36,6 +40,9 @@ export const COMMON_EXERCISES = [
   'Hip Thrust',
   'Calf Raise',
   'Goblet Squat',
+  'Step-up',
+  'Glute Bridge',
+  'Seated Calf Raise',
 
   // Shoulders
   'Overhead Press',
@@ -46,6 +53,7 @@ export const COMMON_EXERCISES = [
   'Rear Delt Fly',
   'Upright Row',
   'Shrug',
+  'Cable Lateral Raise',
 
   // Arms
   'Bicep Curl',
@@ -55,6 +63,8 @@ export const COMMON_EXERCISES = [
   'Tricep Extension',
   'Skull Crusher',
   'Close-Grip Bench Press',
+  'Cable Curl',
+  'Bench Dip',
 
   // Core
   'Plank',
@@ -78,4 +88,8 @@ export const COMMON_EXERCISES = [
   'Jump Rope',
   'Sprints',
   'Hiking',
+  'Treadmill Run',
+  'Stationary Bike',
+  'Ski Erg',
+  'Boxing',
 ]

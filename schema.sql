@@ -20,18 +20,22 @@ create table if not exists public.exercises (
 
 alter table public.exercises enable row level security;
 
+drop policy if exists "Anyone can read default or own exercises" on public.exercises;
 create policy "Anyone can read default or own exercises"
   on public.exercises for select
   using (user_id is null or user_id = auth.uid());
 
+drop policy if exists "Users can insert their own exercises" on public.exercises;
 create policy "Users can insert their own exercises"
   on public.exercises for insert
   with check (user_id = auth.uid());
 
+drop policy if exists "Users can update their own exercises" on public.exercises;
 create policy "Users can update their own exercises"
   on public.exercises for update
   using (user_id = auth.uid());
 
+drop policy if exists "Users can delete their own exercises" on public.exercises;
 create policy "Users can delete their own exercises"
   on public.exercises for delete
   using (user_id = auth.uid());
@@ -49,18 +53,22 @@ create table if not exists public.routines (
 
 alter table public.routines enable row level security;
 
+drop policy if exists "Users can view their own routines" on public.routines;
 create policy "Users can view their own routines"
   on public.routines for select
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can insert their own routines" on public.routines;
 create policy "Users can insert their own routines"
   on public.routines for insert
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update their own routines" on public.routines;
 create policy "Users can update their own routines"
   on public.routines for update
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can delete their own routines" on public.routines;
 create policy "Users can delete their own routines"
   on public.routines for delete
   using (auth.uid() = user_id);
@@ -77,6 +85,7 @@ create table if not exists public.routine_exercises (
 
 alter table public.routine_exercises enable row level security;
 
+drop policy if exists "Users can view routine exercises for their own routines" on public.routine_exercises;
 create policy "Users can view routine exercises for their own routines"
   on public.routine_exercises for select
   using (
@@ -86,6 +95,7 @@ create policy "Users can view routine exercises for their own routines"
     )
   );
 
+drop policy if exists "Users can insert routine exercises for their own routines" on public.routine_exercises;
 create policy "Users can insert routine exercises for their own routines"
   on public.routine_exercises for insert
   with check (
@@ -95,6 +105,7 @@ create policy "Users can insert routine exercises for their own routines"
     )
   );
 
+drop policy if exists "Users can update routine exercises for their own routines" on public.routine_exercises;
 create policy "Users can update routine exercises for their own routines"
   on public.routine_exercises for update
   using (
@@ -104,6 +115,7 @@ create policy "Users can update routine exercises for their own routines"
     )
   );
 
+drop policy if exists "Users can delete routine exercises for their own routines" on public.routine_exercises;
 create policy "Users can delete routine exercises for their own routines"
   on public.routine_exercises for delete
   using (
@@ -127,18 +139,22 @@ create table if not exists public.workout_sessions (
 
 alter table public.workout_sessions enable row level security;
 
+drop policy if exists "Users can view their own workout sessions" on public.workout_sessions;
 create policy "Users can view their own workout sessions"
   on public.workout_sessions for select
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can insert their own workout sessions" on public.workout_sessions;
 create policy "Users can insert their own workout sessions"
   on public.workout_sessions for insert
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update their own workout sessions" on public.workout_sessions;
 create policy "Users can update their own workout sessions"
   on public.workout_sessions for update
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can delete their own workout sessions" on public.workout_sessions;
 create policy "Users can delete their own workout sessions"
   on public.workout_sessions for delete
   using (auth.uid() = user_id);
@@ -155,6 +171,7 @@ create table if not exists public.exercise_logs (
 
 alter table public.exercise_logs enable row level security;
 
+drop policy if exists "Users can view exercise logs for their own sessions" on public.exercise_logs;
 create policy "Users can view exercise logs for their own sessions"
   on public.exercise_logs for select
   using (
@@ -164,6 +181,7 @@ create policy "Users can view exercise logs for their own sessions"
     )
   );
 
+drop policy if exists "Users can insert exercise logs for their own sessions" on public.exercise_logs;
 create policy "Users can insert exercise logs for their own sessions"
   on public.exercise_logs for insert
   with check (
@@ -173,6 +191,7 @@ create policy "Users can insert exercise logs for their own sessions"
     )
   );
 
+drop policy if exists "Users can update exercise logs for their own sessions" on public.exercise_logs;
 create policy "Users can update exercise logs for their own sessions"
   on public.exercise_logs for update
   using (
@@ -182,6 +201,7 @@ create policy "Users can update exercise logs for their own sessions"
     )
   );
 
+drop policy if exists "Users can delete exercise logs for their own sessions" on public.exercise_logs;
 create policy "Users can delete exercise logs for their own sessions"
   on public.exercise_logs for delete
   using (
@@ -207,6 +227,7 @@ create table if not exists public.set_logs (
 
 alter table public.set_logs enable row level security;
 
+drop policy if exists "Users can view set logs for their own sessions" on public.set_logs;
 create policy "Users can view set logs for their own sessions"
   on public.set_logs for select
   using (
@@ -216,6 +237,8 @@ create policy "Users can view set logs for their own sessions"
       where el.id = set_logs.exercise_log_id and s.user_id = auth.uid()
     )
   );
+
+drop policy if exists "Users can insert set logs for their own sessions" on public.set_logs;
 
 create policy "Users can insert set logs for their own sessions"
   on public.set_logs for insert
@@ -227,6 +250,7 @@ create policy "Users can insert set logs for their own sessions"
     )
   );
 
+drop policy if exists "Users can update set logs for their own sessions" on public.set_logs;
 create policy "Users can update set logs for their own sessions"
   on public.set_logs for update
   using (
@@ -237,6 +261,7 @@ create policy "Users can update set logs for their own sessions"
     )
   );
 
+drop policy if exists "Users can delete set logs for their own sessions" on public.set_logs;
 create policy "Users can delete set logs for their own sessions"
   on public.set_logs for delete
   using (
@@ -255,11 +280,61 @@ select v.name, v.category, v.primary_muscle, false, null
 from (
   values
     ('Bench Press', 'barbell', 'Chest'),
+    ('Incline Bench Press', 'barbell', 'Chest'),
+    ('Dumbbell Bench Press', 'dumbbell', 'Chest'),
+    ('Dumbbell Fly', 'dumbbell', 'Chest'),
+    ('Cable Fly', 'machine', 'Chest'),
+    ('Chest Press Machine', 'machine', 'Chest'),
+    ('Push-up', 'bodyweight', 'Chest'),
+    ('Dip', 'bodyweight', 'Chest'),
     ('Barbell Squat', 'barbell', 'Quads'),
+    ('Front Squat', 'barbell', 'Quads'),
+    ('Leg Press', 'machine', 'Quads'),
+    ('Leg Extension', 'machine', 'Quads'),
+    ('Walking Lunge', 'dumbbell', 'Quads'),
+    ('Bulgarian Split Squat', 'dumbbell', 'Quads'),
+    ('Goblet Squat', 'dumbbell', 'Quads'),
     ('Deadlift', 'barbell', 'Back'),
+    ('Romanian Deadlift', 'barbell', 'Hamstrings'),
+    ('Leg Curl', 'machine', 'Hamstrings'),
+    ('Hip Thrust', 'barbell', 'Glutes'),
+    ('Calf Raise', 'machine', 'Quads'),
     ('Overhead Press', 'barbell', 'Shoulders'),
+    ('Dumbbell Shoulder Press', 'dumbbell', 'Shoulders'),
+    ('Arnold Press', 'dumbbell', 'Shoulders'),
+    ('Lateral Raise', 'dumbbell', 'Shoulders'),
+    ('Rear Delt Fly', 'dumbbell', 'Shoulders'),
     ('Lat Pulldown', 'machine', 'Back'),
-    ('Incline Dumbbell Press', 'dumbbell', 'Chest')
+    ('Pull-up', 'bodyweight', 'Back'),
+    ('Chin-up', 'bodyweight', 'Back'),
+    ('Barbell Row', 'barbell', 'Back'),
+    ('Dumbbell Row', 'dumbbell', 'Back'),
+    ('Seated Cable Row', 'machine', 'Back'),
+    ('T-Bar Row', 'machine', 'Back'),
+    ('Face Pull', 'machine', 'Shoulders'),
+    ('Back Extension', 'bodyweight', 'Back'),
+    ('Incline Dumbbell Press', 'dumbbell', 'Chest'),
+    ('Bicep Curl', 'dumbbell', 'Biceps'),
+    ('Hammer Curl', 'dumbbell', 'Biceps'),
+    ('Preacher Curl', 'machine', 'Biceps'),
+    ('Tricep Pushdown', 'machine', 'Triceps'),
+    ('Tricep Extension', 'dumbbell', 'Triceps'),
+    ('Skull Crusher', 'barbell', 'Triceps'),
+    ('Plank', 'bodyweight', 'Core'),
+    ('Side Plank', 'bodyweight', 'Core'),
+    ('Crunch', 'bodyweight', 'Core'),
+    ('Hanging Leg Raise', 'bodyweight', 'Core'),
+    ('Cable Woodchopper', 'machine', 'Core'),
+    ('Rowing Machine', 'machine', 'Cardio'),
+    ('Treadmill Run', 'machine', 'Cardio'),
+    ('Stationary Bike', 'machine', 'Cardio'),
+    ('Elliptical', 'machine', 'Cardio'),
+    ('Stair Climber', 'machine', 'Cardio'),
+    ('Swimming', 'bodyweight', 'Cardio'),
+    ('Jump Rope', 'bodyweight', 'Cardio'),
+    ('Outdoor Run', 'bodyweight', 'Cardio'),
+    ('Walking', 'bodyweight', 'Cardio'),
+    ('Hiking', 'bodyweight', 'Cardio')
 ) as v(name, category, primary_muscle)
 where not exists (
   select 1 from public.exercises e

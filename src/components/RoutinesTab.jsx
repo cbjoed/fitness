@@ -1,8 +1,33 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWorkout } from '../context/WorkoutContext'
-import { createRoutine, fetchRoutines } from '../lib/workoutApi'
+import { createRoutine, fetchExercises, fetchRoutines } from '../lib/workoutApi'
 import ExercisePickerModal from './ExercisePickerModal'
+
+const PRESET_ROUTINES = [
+  {
+    title: 'Row & Legs',
+    description: 'Rowing warm-up followed by a lower-body session.',
+    exerciseNames: ['Rowing Machine', 'Barbell Squat', 'Romanian Deadlift', 'Leg Press', 'Leg Curl', 'Calf Raise'],
+  },
+  {
+    title: 'Row & Push',
+    description: 'Rowing warm-up followed by chest, shoulders, and triceps.',
+    exerciseNames: [
+      'Rowing Machine',
+      'Bench Press',
+      'Incline Dumbbell Press',
+      'Overhead Press',
+      'Lateral Raise',
+      'Tricep Pushdown',
+    ],
+  },
+  {
+    title: 'Row & Pull',
+    description: 'Rowing warm-up followed by back and biceps.',
+    exerciseNames: ['Rowing Machine', 'Lat Pulldown', 'Seated Cable Row', 'Dumbbell Row', 'Face Pull', 'Bicep Curl'],
+  },
+]
 
 function NewRoutineForm({ onCreated, onCancel }) {
   const [title, setTitle] = useState('')
@@ -145,6 +170,31 @@ export default function RoutinesTab() {
     }
   }
 
+  async function handleStartPreset(preset) {
+    setBusy(true)
+    setError('')
+    try {
+      const exercises = await fetchExercises()
+      const exercisesByName = new Map(exercises.map((exercise) => [exercise.name, exercise]))
+      const missingExercise = preset.exerciseNames.find((name) => !exercisesByName.has(name))
+      if (missingExercise) {
+        throw new Error(`Add the updated exercise library in Supabase before starting this routine. Missing: ${missingExercise}`)
+      }
+
+      await loadRoutineIntoWorkout({
+        title: preset.title,
+        routine_exercises: preset.exerciseNames.map((name, sort_order) => ({
+          sort_order,
+          exercise: exercisesByName.get(name),
+        })),
+      })
+      navigate('/workout/active')
+    } catch (err) {
+      setError(err.message)
+      setBusy(false)
+    }
+  }
+
   const groups = routines.reduce((acc, routine) => {
     const key = routine.title || 'Untitled'
     acc[key] = acc[key] ?? []
@@ -159,6 +209,22 @@ export default function RoutinesTab() {
       <button type="button" className="start-empty-button" onClick={handleStartEmpty} disabled={busy}>
         Start Empty Workout
       </button>
+
+      <section className="preset-routines" aria-label="Starter routines">
+        <h2>Starter Routines</h2>
+        {PRESET_ROUTINES.map((preset) => (
+          <article key={preset.title} className="preset-routine card">
+            <div>
+              <h3>{preset.title}</h3>
+              <p>{preset.description}</p>
+              <span>{preset.exerciseNames.join(' · ')}</span>
+            </div>
+            <button type="button" onClick={() => handleStartPreset(preset)} disabled={busy}>
+              Start
+            </button>
+          </article>
+        ))}
+      </section>
 
       {!showNewRoutine && (
         <button type="button" className="ghost-button" onClick={() => setShowNewRoutine(true)}>

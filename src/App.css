@@ -342,6 +342,51 @@ textarea:focus {
   font-weight: 600;
 }
 
+.preset-routines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preset-routines h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.preset-routine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+}
+
+.preset-routine h3,
+.preset-routine p {
+  margin: 0;
+}
+
+.preset-routine h3 {
+  color: var(--text-h);
+  font-size: 16px;
+}
+
+.preset-routine p,
+.preset-routine span {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.preset-routine span {
+  margin-top: 6px;
+}
+
+.preset-routine button {
+  flex: 0 0 auto;
+}
+
 .routine-group h2 {
   font-size: 16px;
   margin-bottom: 12px;
@@ -357,6 +402,17 @@ textarea:focus {
 
 .routine-row:first-of-type {
   border-top: none;
+}
+
+@media (max-width: 480px) {
+  .preset-routine {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .preset-routine button {
+    width: 100%;
+  }
 }
 
 .new-routine-form {
