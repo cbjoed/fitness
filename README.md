@@ -1,11 +1,34 @@
-# React + Vite
+# Fitness Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A dark-mode-first, mobile-friendly workout tracker built with React + Vite and
+Supabase (Auth + Postgres). It includes a simple workout log/progress view, and
+a Strong-style routine/active-workout logger with sets, rest timer, and an
+exercise library.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Install dependencies: `npm install`
+2. Create a Supabase project and copy `.env.example` to `.env`, filling in:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+3. Run the SQL migrations in the Supabase SQL editor (or via the CLI):
+   - `supabase/schema.sql` — simple `workout_logs` table used by the Log/Progress tabs.
+   - `schema.sql` — Strong-style schema (`exercises`, `routines`, `routine_exercises`,
+     `workout_sessions`, `exercise_logs`, `set_logs`) with row level security and
+     seeded default exercises, used by the Routines/Active Workout tabs.
+4. Start the dev server: `npm run dev`
+
+## Building for GitHub Pages
+
+- `npm run build` outputs static assets to `dist/` using Vite.
+- Routing uses `HashRouter`, so deep links (e.g. `#/workout/active`) work on
+  GitHub Pages without a custom 404 redirect.
+- `vite.config.js` sets `base: '/'` because this repo is deployed to a custom
+  domain (see `CNAME`). If you deploy to `https://<user>.github.io/fitness/`
+  without a custom domain, change `base` to `/fitness/` instead.
+- The `.github/workflows/deploy.yml` workflow builds and publishes `dist` to
+  GitHub Pages on every push to `main`, reading `VITE_SUPABASE_URL` and
+  `VITE_SUPABASE_ANON_KEY` from repository secrets.
 
 ## React Compiler
 

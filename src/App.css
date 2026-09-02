@@ -328,3 +328,357 @@ textarea:focus {
 }
 
 
+
+/* ---------------------------------------------------------------------- */
+/* Workout tracker (routines, active workout, rest timer)                 */
+/* ---------------------------------------------------------------------- */
+
+.routines-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.start-empty-button {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.routine-group h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.routine-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+
+.routine-row:first-of-type {
+  border-top: none;
+}
+
+.new-routine-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.new-routine-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.routine-exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.routine-exercise-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.routine-exercise-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.routine-exercise-controls button {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.new-routine-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.ghost-button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.ghost-button:hover {
+  border-color: var(--accent-border);
+  color: var(--text-h);
+}
+
+.active-workout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 90px;
+}
+
+.active-workout-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+}
+
+.active-workout-header strong {
+  display: block;
+  color: var(--text-h);
+  font-size: 16px;
+}
+
+.active-workout-timer {
+  display: block;
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.active-workout-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.exercise-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.exercise-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.exercise-card-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-h);
+}
+
+.exercise-card-subtitle {
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.85;
+}
+
+.sets-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.sets-table th {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  opacity: 0.7;
+  padding-bottom: 6px;
+}
+
+.sets-table td {
+  text-align: center;
+  padding: 4px;
+}
+
+.sets-table input {
+  width: 64px;
+  text-align: center;
+  padding: 6px 4px;
+  margin: 0 auto;
+}
+
+.previous-cell {
+  color: var(--text);
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.set-type-badge {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--code-bg);
+  color: var(--text-h);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.set-type-badge.set-type-warmup {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.set-type-badge.set-type-drop {
+  background: rgba(229, 72, 77, 0.15);
+  color: #e5484d;
+}
+
+.set-type-badge.set-type-failure {
+  background: #e5484d;
+  color: #fff;
+}
+
+.check-button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 8px;
+  background: var(--code-bg);
+  color: var(--text);
+}
+
+.check-button-active {
+  background: #2fb344;
+  color: #fff;
+}
+
+.set-row-completed {
+  background: rgba(47, 179, 68, 0.08);
+}
+
+.add-set-button,
+.add-exercise-button {
+  width: 100%;
+  background: var(--code-bg);
+  color: var(--text-h);
+  border: 1px dashed var(--border);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.modal {
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: var(--bg);
+  border-radius: 16px 16px 0 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.exercise-picker-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.exercise-picker-list button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background: var(--code-bg);
+  color: var(--text-h);
+}
+
+.exercise-picker-muscle {
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.rest-timer-modal {
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 640px) {
+  .rest-timer-modal {
+    bottom: 76px;
+  }
+}
+
+.rest-timer-label {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}
+
+.rest-timer-clock {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  margin-right: auto;
+}
+
+.rest-timer-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.rest-timer-controls button {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.rest-timer-controls .ghost-button {
+  border-color: rgba(255, 255, 255, 0.5);
+}
