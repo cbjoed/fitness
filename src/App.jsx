@@ -3,7 +3,6 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { WorkoutProvider } from './context/WorkoutContext'
 import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
-import Dashboard from './components/Dashboard'
 import ProgressChart from './components/ProgressChart'
 import RoutinesTab from './components/RoutinesTab'
 import ActiveWorkout from './components/ActiveWorkout'
@@ -17,9 +16,6 @@ function Header() {
     <header className="app-header">
       <strong className="app-title">Fitness Tracker</strong>
       <nav className="header-nav">
-        <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
-          Log
-        </NavLink>
         <NavLink to="/progress" className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Progress
         </NavLink>
@@ -40,10 +36,6 @@ function BottomNav() {
 
   return (
     <nav className="bottom-nav">
-      <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
-        <span className="bottom-nav-icon" aria-hidden="true">🏋️</span>
-        Log
-      </NavLink>
       <NavLink to="/progress" className={({ isActive }) => (isActive ? 'active' : undefined)}>
         <span className="bottom-nav-icon" aria-hidden="true">📈</span>
         Progress
@@ -62,11 +54,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route
         path="/"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
+        element={<Navigate to="/routines" replace />}
       />
       <Route
         path="/progress"

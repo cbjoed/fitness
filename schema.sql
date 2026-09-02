@@ -1,8 +1,5 @@
 -- Strong-style workout tracker schema.
 -- Run this in the Supabase SQL editor (or via the Supabase CLI) for your project.
--- This migration is additive and does not touch the existing `public.workout_logs`
--- table used by the simple log/progress screens (see supabase/schema.sql).
-
 create extension if not exists pgcrypto;
 
 -- ---------------------------------------------------------------------------
@@ -13,10 +10,17 @@ create table if not exists public.exercises (
   name text not null,
   category text not null check (category in ('barbell', 'dumbbell', 'machine', 'bodyweight')),
   primary_muscle text not null,
+  image_url text,
+  target_muscles text[] not null default '{}',
+  instructions text[] not null default '{}',
   is_custom boolean not null default false,
   user_id uuid references auth.users (id),
   created_at timestamptz not null default now()
 );
+
+alter table public.exercises add column if not exists image_url text;
+alter table public.exercises add column if not exists target_muscles text[] not null default '{}';
+alter table public.exercises add column if not exists instructions text[] not null default '{}';
 
 alter table public.exercises enable row level security;
 

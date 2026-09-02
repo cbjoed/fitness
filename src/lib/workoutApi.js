@@ -2,6 +2,45 @@
 // (routines, active sessions, exercise library, previous-performance lookups).
 import { supabase } from '../supabaseClient'
 
+let wgerGuidesPromise
+
+function cleanDescription(description = '') {
+  const element = document.createElement('div')
+  element.innerHTML = description
+  return element.textContent?.replace(/\s+/g, ' ').trim() ?? ''
+}
+
+function exerciseKey(name = '') {
+  return name.toLowerCase().replace(/\([^)]*\)/g, '').replace(/[^a-z0-9]/g, '')
+}
+
+async function fetchWgerGuides() {
+  if (!wgerGuidesPromise) {
+    wgerGuidesPromise = fetch('https://wger.de/api/v2/exerciseinfo/?limit=1000&language=2&status=2')
+      .then((response) => {
+        if (!response.ok) throw new Error('Wger exercise library unavailable')
+        return response.json()
+      })
+      .then(({ results = [] }) => {
+        const guides = new Map()
+        results.forEach((exercise) => {
+          const translation = exercise.translations?.find((item) => item.language === 2) ?? exercise.translations?.[0]
+          guides.set(exerciseKey(translation?.name || exercise.name), {
+            image_url: exercise.images?.[0]?.image ?? null,
+            target_muscles: [...(exercise.muscles ?? []), ...(exercise.muscles_secondary ?? [])]
+              .map((muscle) => muscle.name_en || muscle.name)
+              .filter(Boolean),
+            instructions: cleanDescription(translation?.description),
+            source_url: `https://wger.de/en/exercise/${exercise.id}/view`,
+          })
+        })
+        return guides
+      })
+      .catch(() => new Map())
+  }
+  return wgerGuidesPromise
+}
+
 export async function fetchExercises({ search = '', muscle = '' } = {}) {
   let query = supabase.from('exercises').select('*').order('name', { ascending: true })
 
@@ -14,7 +53,20 @@ export async function fetchExercises({ search = '', muscle = '' } = {}) {
 
   const { data, error } = await query
   if (error) throw error
-  return data ?? []
+
+  const guides = await fetchWgerGuides()
+  return (data ?? []).map((exercise) => {
+    const guide = guides.get(exerciseKey(exercise.name))
+    return guide
+      ? {
+          ...exercise,
+          image_url: exercise.image_url || guide.image_url,
+          target_muscles: exercise.target_muscles?.length ? exercise.target_muscles : guide.target_muscles,
+          instructions: exercise.instructions?.length ? exercise.instructions : guide.instructions ? [guide.instructions] : [],
+          source_url: guide.source_url,
+        }
+      : exercise
+  })
 }
 
 export async function fetchPreviousPerformance(exerciseId) {

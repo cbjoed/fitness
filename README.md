@@ -1,9 +1,8 @@
 # Fitness Tracker
 
-A dark-mode-first, mobile-friendly workout tracker built with React + Vite and
-Supabase (Auth + Postgres). It includes a simple workout log/progress view, and
-a Strong-style routine/active-workout logger with sets, rest timer, and an
-exercise library.
+A mobile-friendly Strong-style routine tracker built with React + Vite and
+Supabase (Auth + Postgres). It includes routine creation, active workouts with
+sets and a rest timer, routine-based progress charts, and exercise guidance.
 
 ## Setup
 
@@ -12,10 +11,12 @@ exercise library.
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
 3. Run the SQL migrations in the Supabase SQL editor (or via the CLI):
-   - `supabase/schema.sql` — simple `workout_logs` table used by the Log/Progress tabs.
-   - `schema.sql` — Strong-style schema (`exercises`, `routines`, `routine_exercises`,
-     `workout_sessions`, `exercise_logs`, `set_logs`) with row level security and
-     seeded default exercises, used by the Routines/Active Workout tabs.
+   - `schema.sql` — routine schema (`exercises`, `routines`, `routine_exercises`,
+     `workout_sessions`, `exercise_logs`, `set_logs`) with row level security,
+     exercise guidance metadata, and seeded default exercises.
+   - Exercise guidance is enriched from the open-source Wger API. Wger media and
+     descriptions are licensed under CC-BY-SA 4.0; each workout guide links to
+     its source reference.
 4. Start the dev server: `npm run dev`
 
 ## Building for GitHub Pages

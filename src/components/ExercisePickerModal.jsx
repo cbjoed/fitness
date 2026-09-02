@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { fetchExercises } from '../lib/workoutApi'
+import { getExerciseGuide } from '../lib/exerciseGuide'
 
 const MUSCLE_OPTIONS = [
   'Chest',
@@ -73,8 +74,14 @@ export default function ExercisePickerModal({ onSelect, onClose }) {
             exerciseList.map((exercise) => (
               <li key={exercise.id}>
                 <button type="button" onClick={() => onSelect(exercise)}>
+                  <img
+                    className="exercise-picker-image"
+                    src={getExerciseGuide(exercise).imageUrl}
+                    alt=""
+                    loading="lazy"
+                  />
                   <span className="exercise-picker-name">{exercise.name}</span>
-                  <span className="exercise-picker-muscle">{exercise.primary_muscle}</span>
+                  <span className="exercise-picker-muscle">{getExerciseGuide(exercise).targetMuscles}</span>
                 </button>
               </li>
             ))}

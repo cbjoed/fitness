@@ -30,6 +30,9 @@ function makeExerciseEntry(exercise) {
     exerciseId: exercise.id,
     name: exercise.name,
     primaryMuscle: exercise.primary_muscle,
+    imageUrl: exercise.image_url,
+    instructions: exercise.instructions,
+    targetMuscles: exercise.target_muscles,
     previous: null,
     sets: [makeSet(null)],
   }

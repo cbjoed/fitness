@@ -1,4 +1,5 @@
 import { useWorkout } from '../context/WorkoutContext'
+import { getExerciseGuide } from '../lib/exerciseGuide'
 
 const SET_TYPE_BADGE = {
   normal: null, // shows the numeric set index instead
@@ -14,6 +15,13 @@ function previousLabel(previous) {
 
 export default function ExerciseCard({ exercise }) {
   const { removeExercise, addSet, removeSet, cycleSetType, updateSetField, toggleSetCompleted } = useWorkout()
+  const guide = getExerciseGuide({
+    name: exercise.name,
+    primary_muscle: exercise.primaryMuscle,
+    image_url: exercise.imageUrl,
+    instructions: exercise.instructions,
+    target_muscles: exercise.targetMuscles,
+  })
 
   return (
     <section className="exercise-card">
@@ -31,6 +39,17 @@ export default function ExerciseCard({ exercise }) {
           ✕
         </button>
       </header>
+
+      <div className="exercise-guide">
+        <img src={guide.imageUrl} alt={`${exercise.name} exercise demonstration`} loading="lazy" />
+        <div>
+          <strong>Targets: {guide.targetMuscles}</strong>
+          <p>{guide.instructions}</p>
+          <a className="exercise-guide-source" href={guide.sourceUrl} target="_blank" rel="noreferrer">
+            Exercise reference
+          </a>
+        </div>
+      </div>
 
       <table className="sets-table">
         <thead>

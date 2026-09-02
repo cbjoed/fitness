@@ -10,18 +10,28 @@ export default function ProgressChart() {
   useEffect(() => {
     async function load() {
       const { data, error: fetchError } = await supabase
-        .from('workout_logs')
-        .select('date, exercise_name, weight_kg, distance_meters, duration_minutes')
-        .order('date', { ascending: true })
+        .from('set_logs')
+        .select(
+          'weight_kg, reps, is_completed, exercise_log:exercise_logs!inner(exercise:exercises!inner(name, primary_muscle), session:workout_sessions!inner(start_time))',
+        )
+        .eq('is_completed', true)
 
       if (fetchError) {
         setError(fetchError.message)
         return
       }
 
-      setEntries(data)
-      if (data.length > 0 && !exercise) {
-        setExercise(data[0].exercise_name)
+      const normalized = (data ?? []).map((entry) => ({
+        date: entry.exercise_log.session.start_time,
+        exercise_name: entry.exercise_log.exercise.name,
+        primary_muscle: entry.exercise_log.exercise.primary_muscle,
+        weight_kg: entry.weight_kg == null ? null : Number(entry.weight_kg),
+        reps: entry.reps == null ? null : Number(entry.reps),
+      }))
+      normalized.sort((left, right) => new Date(left.date) - new Date(right.date))
+      setEntries(normalized)
+      if (normalized.length > 0 && !exercise) {
+        setExercise(normalized[0].exercise_name)
       }
     }
 
@@ -38,15 +48,22 @@ export default function ProgressChart() {
     () =>
       entries
         .filter((entry) => entry.exercise_name === exercise)
-        .map((entry) => ({
-          date: entry.date,
-          weight_kg: entry.weight_kg,
-          distance_km: entry.distance_meters ? entry.distance_meters / 1000 : null,
-        })),
+        .reduce((points, entry) => {
+          const date = new Date(entry.date).toLocaleDateString()
+          const previous = points.at(-1)
+          if (previous?.date === date) {
+            previous.volume_kg += (entry.weight_kg ?? 0) * (entry.reps ?? 0)
+            previous.max_weight_kg = Math.max(previous.max_weight_kg, entry.weight_kg ?? 0)
+            return points
+          }
+          return [...points, {
+            date,
+            volume_kg: (entry.weight_kg ?? 0) * (entry.reps ?? 0),
+            max_weight_kg: entry.weight_kg ?? 0,
+          }]
+        }, []),
     [entries, exercise],
   )
-
-  const isCardio = chartData.some((point) => point.distance_km !== null)
 
   if (error) return <p className="form-error">{error}</p>
 
@@ -54,7 +71,7 @@ export default function ProgressChart() {
     <div className="progress-chart">
       <h2>Progress</h2>
       {exerciseNames.length === 0 ? (
-        <p>Log some entries to see progress charts.</p>
+        <p>Finish a routine workout to see your progress here.</p>
       ) : (
         <>
           <label>
@@ -74,11 +91,8 @@ export default function ProgressChart() {
               <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
-              {isCardio ? (
-                <Line type="monotone" dataKey="distance_km" name="Distance (km)" stroke="#2563eb" />
-              ) : (
-                <Line type="monotone" dataKey="weight_kg" name="Weight (kg)" stroke="#2563eb" />
-              )}
+              <Line type="monotone" dataKey="max_weight_kg" name="Top weight (kg)" stroke="#2563eb" />
+              <Line type="monotone" dataKey="volume_kg" name="Volume (kg)" stroke="#aa3bff" />
             </LineChart>
           </ResponsiveContainer>
         </>

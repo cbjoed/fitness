@@ -175,12 +175,6 @@ textarea:focus {
   margin-top: 28px;
 }
 
-.dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
 .card {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -189,8 +183,6 @@ textarea:focus {
   box-shadow: var(--shadow);
 }
 
-.log-entry-form,
-.history-list,
 .progress-chart {
   background: var(--bg);
   border: 1px solid var(--border);
@@ -199,128 +191,46 @@ textarea:focus {
   box-shadow: var(--shadow);
 }
 
-.log-entry-form {
-  display: flex;
-  flex-direction: column;
+.exercise-guide {
+  display: grid;
+  grid-template-columns: 132px 1fr;
   gap: 14px;
-}
-
-.log-entry-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
-  color: var(--text);
-}
-
-.log-entry-form button[type='submit'] {
-  align-self: flex-start;
-  margin-top: 4px;
-}
-
-.form-row {
-  display: flex;
-  gap: 12px;
-}
-
-.form-row label {
-  flex: 1;
-  min-width: 0;
-}
-
-@media (max-width: 480px) {
-  .form-row {
-    flex-direction: column;
-  }
-}
-
-.form-error {
-  color: #e5484d;
-  font-size: 14px;
-}
-
-.day-groups {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.day-group-header {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  margin-bottom: 8px;
-}
-
-.entry-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.entry-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 14px;
+  align-items: stretch;
+  margin: 0 0 18px;
+  overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 10px;
+  background: var(--code-bg);
 }
 
-.entry-main {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+.exercise-guide img {
+  width: 132px;
+  height: 104px;
+  object-fit: cover;
 }
 
-.entry-name {
-  font-weight: 600;
+.exercise-guide div {
+  padding: 12px 12px 12px 0;
+}
+
+.exercise-guide strong {
+  display: block;
   color: var(--text-h);
-}
-
-.entry-stats {
-  font-size: 14px;
-  color: var(--text);
-}
-
-.entry-notes {
   font-size: 13px;
-  color: var(--text);
-  opacity: 0.8;
+  line-height: 1.35;
 }
 
-.entry-delete {
-  flex-shrink: 0;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.exercise-guide p {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
-.entry-delete:hover {
-  border-color: #e5484d;
-  color: #e5484d;
-}
-
-.progress-chart label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  max-width: 260px;
+.exercise-guide-source {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--accent);
+  font-size: 12px;
 }
 
 
@@ -675,9 +585,24 @@ textarea:focus {
 .exercise-picker-list button {
   width: 100%;
   display: flex;
+  align-items: center;
+  gap: 10px;
   justify-content: space-between;
   background: var(--code-bg);
   color: var(--text-h);
+}
+
+.exercise-picker-image {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.exercise-picker-name {
+  margin-right: auto;
+  text-align: left;
 }
 
 .exercise-picker-muscle {
@@ -702,6 +627,15 @@ textarea:focus {
 }
 
 @media (max-width: 640px) {
+  .exercise-guide {
+    grid-template-columns: 96px 1fr;
+  }
+
+  .exercise-guide img {
+    width: 96px;
+    height: 116px;
+  }
+
   .rest-timer-modal {
     bottom: 76px;
   }
