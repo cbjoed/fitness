@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { toMeters } from '../lib/units'
+import { COMMON_EXERCISES } from '../lib/exercises'
 import { useAuth } from '../context/AuthContext'
 
 const emptyForm = {
@@ -71,11 +72,18 @@ export default function LogEntryForm({ onEntryAdded }) {
         <input
           type="text"
           name="exercise_name"
+          list="exercise-options"
           value={form.exercise_name}
           onChange={handleChange}
           placeholder="e.g. Bench Press, Running"
+          autoComplete="off"
           required
         />
+        <datalist id="exercise-options">
+          {COMMON_EXERCISES.map((name) => (
+            <option key={name} value={name} />
+          ))}
+        </datalist>
       </label>
 
       <div className="form-row">

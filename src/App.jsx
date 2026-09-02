@@ -12,9 +12,14 @@ function Header() {
 
   return (
     <header className="app-header">
+      <strong className="app-title">Fitness Tracker</strong>
       <nav>
-        <NavLink to="/">Log</NavLink>
-        <NavLink to="/progress">Progress</NavLink>
+        <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
+          Log
+        </NavLink>
+        <NavLink to="/progress" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+          Progress
+        </NavLink>
       </nav>
       <button type="button" onClick={signOut}>
         Sign out
