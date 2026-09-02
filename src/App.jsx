@@ -13,7 +13,7 @@ function Header() {
   return (
     <header className="app-header">
       <strong className="app-title">Fitness Tracker</strong>
-      <nav>
+      <nav className="header-nav">
         <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
           Log
         </NavLink>
@@ -25,6 +25,24 @@ function Header() {
         Sign out
       </button>
     </header>
+  )
+}
+
+function BottomNav() {
+  const { user } = useAuth()
+  if (!user) return null
+
+  return (
+    <nav className="bottom-nav">
+      <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
+        <span className="bottom-nav-icon" aria-hidden="true">🏋️</span>
+        Log
+      </NavLink>
+      <NavLink to="/progress" className={({ isActive }) => (isActive ? 'active' : undefined)}>
+        <span className="bottom-nav-icon" aria-hidden="true">📈</span>
+        Progress
+      </NavLink>
+    </nav>
   )
 }
 
@@ -61,6 +79,7 @@ export default function App() {
         <main className="app-main">
           <AppRoutes />
         </main>
+        <BottomNav />
       </BrowserRouter>
     </AuthProvider>
   )
