@@ -5,6 +5,7 @@ import { fetchPreviousPerformance } from '../lib/workoutApi'
 import ExerciseCard from './ExerciseCard'
 import ExercisePickerModal from './ExercisePickerModal'
 import RestTimerModal from './RestTimerModal'
+import WorkoutCalculators from './WorkoutCalculators'
 
 export default function ActiveWorkout() {
   const navigate = useNavigate()
@@ -30,6 +31,14 @@ export default function ActiveWorkout() {
   }, [exercises, setPreviousPerformance])
 
   if (!session) return null
+
+  const completedSets = exercises.reduce((total, entry) => total + entry.sets.filter((set) => set.isCompleted).length, 0)
+  const totalVolume = exercises.reduce(
+    (total, entry) =>
+      total +
+      entry.sets.reduce((exerciseTotal, set) => exerciseTotal + (Number(set.weightKg) || 0) * (Number(set.reps) || 0), 0),
+    0,
+  )
 
   async function handleFinish() {
     setBusy(true)
@@ -62,6 +71,7 @@ export default function ActiveWorkout() {
         <div>
           <strong>{session.title}</strong>
           <span className="active-workout-timer">{formatElapsed(elapsedSeconds)}</span>
+          <span className="workout-totals">{completedSets} sets · {totalVolume.toFixed(1)} kg volume</span>
         </div>
         <div className="active-workout-actions">
           <button type="button" className="ghost-button" onClick={handleCancel} disabled={busy}>
@@ -82,6 +92,7 @@ export default function ActiveWorkout() {
         {exercises.length === 0 && <p>Add an exercise to get started.</p>}
       </div>
 
+      <WorkoutCalculators />
       <button type="button" className="add-exercise-button" onClick={() => setShowPicker(true)}>
         + Add Exercise
       </button>

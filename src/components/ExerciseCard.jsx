@@ -14,7 +14,16 @@ function previousLabel(previous) {
 }
 
 export default function ExerciseCard({ exercise }) {
-  const { removeExercise, addSet, removeSet, cycleSetType, updateSetField, toggleSetCompleted } = useWorkout()
+  const {
+    removeExercise,
+    moveExercise,
+    updateExerciseField,
+    addSet,
+    removeSet,
+    cycleSetType,
+    updateSetField,
+    toggleSetCompleted,
+  } = useWorkout()
   const guide = getExerciseGuide({
     name: exercise.name,
     primary_muscle: exercise.primaryMuscle,
@@ -30,14 +39,22 @@ export default function ExerciseCard({ exercise }) {
           <h3>{exercise.name}</h3>
           <p className="exercise-card-subtitle">{previousLabel(exercise.previous)}</p>
         </div>
-        <button
-          type="button"
-          className="ghost-button"
-          onClick={() => removeExercise(exercise.id)}
-          aria-label={`Remove ${exercise.name}`}
-        >
-          ✕
-        </button>
+        <div className="exercise-card-actions">
+          <button type="button" className="ghost-button" onClick={() => moveExercise(exercise.id, -1)} aria-label="Move exercise up">
+            ↑
+          </button>
+          <button type="button" className="ghost-button" onClick={() => moveExercise(exercise.id, 1)} aria-label="Move exercise down">
+            ↓
+          </button>
+          <button
+            type="button"
+            className="ghost-button"
+            onClick={() => removeExercise(exercise.id)}
+            aria-label={`Remove ${exercise.name}`}
+          >
+            ✕
+          </button>
+        </div>
       </header>
 
       <div className="exercise-guide">
@@ -49,6 +66,30 @@ export default function ExerciseCard({ exercise }) {
             Exercise reference
           </a>
         </div>
+
+      </div>
+
+      <div className="exercise-settings">
+        <label>
+          Rest (seconds)
+          <input
+            type="number"
+            inputMode="numeric"
+            min="0"
+            step="15"
+            value={exercise.restSeconds}
+            onChange={(event) => updateExerciseField(exercise.id, 'restSeconds', Number(event.target.value) || 0)}
+          />
+        </label>
+        <label>
+          Exercise notes
+          <textarea
+            rows="1"
+            value={exercise.notes}
+            onChange={(event) => updateExerciseField(exercise.id, 'notes', event.target.value)}
+            placeholder="Form cues, setup, or reminders"
+          />
+        </label>
       </div>
 
       <table className="sets-table">
@@ -58,6 +99,7 @@ export default function ExerciseCard({ exercise }) {
             <th>PREVIOUS</th>
             <th>KG</th>
             <th>REPS</th>
+            <th>RPE</th>
             <th aria-label="Completed">✓</th>
             <th aria-label="Remove set" />
           </tr>
@@ -86,6 +128,7 @@ export default function ExerciseCard({ exercise }) {
                   <input
                     type="number"
                     inputMode="decimal"
+                    placeholder={set.previous?.weightKg ?? ''}
                     value={set.weightKg}
                     onChange={(event) => updateSetField(exercise.id, set.id, 'weightKg', event.target.value)}
                   />
@@ -94,8 +137,23 @@ export default function ExerciseCard({ exercise }) {
                   <input
                     type="number"
                     inputMode="numeric"
+                    placeholder={set.previous?.reps ?? ''}
                     value={set.reps}
                     onChange={(event) => updateSetField(exercise.id, set.id, 'reps', event.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    className="rpe-input"
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    aria-label="RPE"
+                    placeholder="RPE"
+                    value={set.rpe}
+                    onChange={(event) => updateSetField(exercise.id, set.id, 'rpe', event.target.value)}
                   />
                 </td>
                 <td>
