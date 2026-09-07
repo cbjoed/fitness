@@ -168,7 +168,12 @@ export async function saveFinishedWorkout(sessionId, exercises) {
   for (const [exerciseIndex, exercise] of exercises.entries()) {
     const { data: exerciseLog, error: exerciseLogError } = await supabase
       .from('exercise_logs')
-      .insert({ session_id: sessionId, exercise_id: exercise.exerciseId, sort_order: exerciseIndex })
+      .insert({
+        session_id: sessionId,
+        exercise_id: exercise.exerciseId,
+        sort_order: exerciseIndex,
+        notes: exercise.notes || null,
+      })
       .select()
       .single()
     if (exerciseLogError) throw exerciseLogError

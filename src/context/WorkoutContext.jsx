@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { createWorkoutSession, cancelWorkoutSession, saveFinishedWorkout } from '../lib/workoutApi'
+import { useAuth } from './AuthContext'
 
 const WorkoutContext = createContext(undefined)
 
@@ -34,17 +35,49 @@ function makeExerciseEntry(exercise) {
     instructions: exercise.instructions,
     targetMuscles: exercise.target_muscles,
     previous: null,
+    notes: '',
+    restSeconds: DEFAULT_REST_SECONDS,
     sets: [makeSet(null)],
   }
 }
 
 export function WorkoutProvider({ children }) {
+  const { user } = useAuth()
   const [session, setSession] = useState(null) // { id, title, startTime }
   const [exercises, setExercises] = useState([])
+  const [storageReady, setStorageReady] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [restTimer, setRestTimer] = useState({ visible: false, remaining: 0, running: false })
   const restIntervalRef = useRef(null)
   const workoutIntervalRef = useRef(null)
+  const storageKey = user ? `fitness-active-workout:${user.id}` : null
+
+  useEffect(() => {
+    if (!storageKey) return
+    setStorageReady(false)
+    setSession(null)
+    setExercises([])
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) ?? 'null')
+      if (saved?.session?.id) {
+        setSession(saved.session)
+        setExercises(saved.exercises ?? [])
+      }
+    } catch {
+      localStorage.removeItem(storageKey)
+    } finally {
+      setStorageReady(true)
+    }
+  }, [storageKey])
+
+  useEffect(() => {
+    if (!storageKey || !storageReady) return
+    if (session) {
+      localStorage.setItem(storageKey, JSON.stringify({ session, exercises }))
+    } else {
+      localStorage.removeItem(storageKey)
+    }
+  }, [storageKey, storageReady, session, exercises])
 
   // Live HH:MM:SS timer for the active session.
   useEffect(() => {
@@ -102,6 +135,17 @@ export function WorkoutProvider({ children }) {
     setExercises((current) => current.filter((entry) => entry.id !== exerciseLogId))
   }, [])
 
+  const moveExercise = useCallback((exerciseLogId, direction) => {
+    setExercises((current) => {
+      const index = current.findIndex((entry) => entry.id === exerciseLogId)
+      const target = index + direction
+      if (index < 0 || target < 0 || target >= current.length) return current
+      const next = [...current]
+      ;[next[index], next[target]] = [next[target], next[index]]
+      return next
+    })
+  }, [])
+
   const setPreviousPerformance = useCallback((exerciseLogId, previous) => {
     setExercises((current) =>
       current.map((entry) =>
@@ -109,6 +153,12 @@ export function WorkoutProvider({ children }) {
           ? { ...entry, previous, sets: entry.sets.map((set) => ({ ...set, previous })) }
           : entry,
       ),
+    )
+  }, [])
+
+  const updateExerciseField = useCallback((exerciseLogId, field, value) => {
+    setExercises((current) =>
+      current.map((entry) => (entry.id === exerciseLogId ? { ...entry, [field]: value } : entry)),
     )
   }, [])
 
@@ -200,9 +250,12 @@ export function WorkoutProvider({ children }) {
         }),
       )
 
-      if (didComplete) startRestTimer(DEFAULT_REST_SECONDS)
+      if (didComplete) {
+        const completedExercise = exercises.find((entry) => entry.id === exerciseLogId)
+        startRestTimer(completedExercise?.restSeconds ?? DEFAULT_REST_SECONDS)
+      }
     },
-    [startRestTimer],
+    [exercises, startRestTimer],
   )
 
   const finishWorkout = useCallback(async () => {
@@ -232,7 +285,9 @@ export function WorkoutProvider({ children }) {
       loadRoutineIntoWorkout,
       addExercise,
       removeExercise,
+      moveExercise,
       setPreviousPerformance,
+      updateExerciseField,
       addSet,
       removeSet,
       cycleSetType,
@@ -252,7 +307,9 @@ export function WorkoutProvider({ children }) {
       loadRoutineIntoWorkout,
       addExercise,
       removeExercise,
+      moveExercise,
       setPreviousPerformance,
+      updateExerciseField,
       addSet,
       removeSet,
       cycleSetType,

@@ -170,8 +170,11 @@ create table if not exists public.exercise_logs (
   id uuid primary key default gen_random_uuid(),
   session_id uuid not null references public.workout_sessions (id) on delete cascade,
   exercise_id uuid not null references public.exercises (id),
-  sort_order integer not null default 0
+  sort_order integer not null default 0,
+  notes text
 );
+
+alter table public.exercise_logs add column if not exists notes text;
 
 alter table public.exercise_logs enable row level security;
 
