@@ -138,6 +138,11 @@ export async function createRoutine({ title, notes = '', exerciseIds = [] }) {
   return routine
 }
 
+export async function deleteRoutine(routineId) {
+  const { error } = await supabase.from('routines').delete().eq('id', routineId)
+  if (error) throw error
+}
+
 export async function createWorkoutSession({ title = 'Workout' } = {}) {
   const {
     data: { user },

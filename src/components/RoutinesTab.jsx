@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWorkout } from '../context/WorkoutContext'
-import { createRoutine, fetchExercises, fetchRoutines } from '../lib/workoutApi'
+import { createRoutine, deleteRoutine, fetchExercises, fetchRoutines } from '../lib/workoutApi'
 import ExercisePickerModal from './ExercisePickerModal'
 
 const PRESET_ROUTINES = [
@@ -170,6 +170,20 @@ export default function RoutinesTab() {
     }
   }
 
+  async function handleDeleteRoutine(routine) {
+    if (!window.confirm(`Delete "${routine.title}"? This cannot be undone.`)) return
+    setBusy(true)
+    setError('')
+    try {
+      await deleteRoutine(routine.id)
+      setRoutines((current) => current.filter((item) => item.id !== routine.id))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
   async function handleStartPreset(preset) {
     setBusy(true)
     setError('')
@@ -251,9 +265,19 @@ export default function RoutinesTab() {
             {group.map((routine) => (
               <div key={routine.id} className="routine-row">
                 <span>{(routine.routine_exercises ?? []).length} exercises</span>
-                <button type="button" onClick={() => handleStartRoutine(routine)} disabled={busy}>
-                  Start
-                </button>
+                <div className="routine-actions">
+                  <button type="button" onClick={() => handleStartRoutine(routine)} disabled={busy}>
+                    Start
+                  </button>
+                  <button
+                    type="button"
+                    className="ghost-button danger-button"
+                    onClick={() => handleDeleteRoutine(routine)}
+                    disabled={busy}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </section>
