@@ -310,6 +310,20 @@ textarea:focus {
   border-top: 1px solid var(--border);
 }
 
+.routine-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.danger-button {
+  color: #dc2626;
+}
+
+.danger-button:hover {
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+
 .routine-row:first-of-type {
   border-top: none;
 }
